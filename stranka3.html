@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puzzle hra</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/loading.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            background: linear-gradient(135deg, #ec407a 0%, #880e4f 100%);
+            font-family: 'Inter', sans-serif;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        h1, h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .puzzle-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .puzzle-frame {
+            width: 300px;
+            height: 300px;
+            border: 10px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 1px;
+            margin-bottom: 30px;
+            padding: 1px;
+        }
+
+        .puzzle-slot {
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            position: relative;
+        }
+
+        .pieces-container {
+            width: 300px;
+            padding: 15px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .puzzle-piece {
+            width: 90px;
+            height: 90px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .puzzle-piece:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .puzzle-piece.selected {
+            transform: scale(1.1);
+            box-shadow: 0 8px 16px rgba(255, 105, 180, 0.4);
+            z-index: 10;
+        }
+
+        .puzzle-piece img {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .success-message {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px 50px;
+            border-radius: 15px;
+            text-align: center;
+            color: #FF1493;
+            font-size: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+        }
+
+        .next-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #FF1493, #FF69B4);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 18px;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .next-button:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <h1>Puzzle hra</h1>
+
+    <div class="puzzle-container">
+        <h2>První puzzle</h2>
+        <div class="puzzle-frame" id="puzzle-frame-1">
+            <div class="puzzle-slot" data-index="0"></div>
+            <div class="puzzle-slot" data-index="1"></div>
+            <div class="puzzle-slot" data-index="2"></div>
+            <div class="puzzle-slot" data-index="3"></div>
+            <div class="puzzle-slot" data-index="4"></div>
+            <div class="puzzle-slot" data-index="5"></div>
+            <div class="puzzle-slot" data-index="6"></div>
+            <div class="puzzle-slot" data-index="7"></div>
+            <div class="puzzle-slot" data-index="8"></div>
+        </div>
+        <div class="pieces-container" id="pieces-container-1"></div>
+    </div>
+
+    <div class="puzzle-container">
+        <h2>Druhé puzzle</h2>
+        <div class="puzzle-frame" id="puzzle-frame-2">
+            <div class="puzzle-slot" data-index="0"></div>
+            <div class="puzzle-slot" data-index="1"></div>
+            <div class="puzzle-slot" data-index="2"></div>
+            <div class="puzzle-slot" data-index="3"></div>
+            <div class="puzzle-slot" data-index="4"></div>
+            <div class="puzzle-slot" data-index="5"></div>
+            <div class="puzzle-slot" data-index="6"></div>
+            <div class="puzzle-slot" data-index="7"></div>
+            <div class="puzzle-slot" data-index="8"></div>
+        </div>
+        <div class="pieces-container" id="pieces-container-2"></div>
+    </div>
+
+    <div class="puzzle-container">
+        <h2>Třetí puzzle</h2>
+        <div class="puzzle-frame" id="puzzle-frame-3">
+            <div class="puzzle-slot" data-index="0"></div>
+            <div class="puzzle-slot" data-index="1"></div>
+            <div class="puzzle-slot" data-index="2"></div>
+            <div class="puzzle-slot" data-index="3"></div>
+            <div class="puzzle-slot" data-index="4"></div>
+            <div class="puzzle-slot" data-index="5"></div>
+            <div class="puzzle-slot" data-index="6"></div>
+            <div class="puzzle-slot" data-index="7"></div>
+            <div class="puzzle-slot" data-index="8"></div>
+        </div>
+        <div class="pieces-container" id="pieces-container-3"></div>
+    </div>
+
+    <div class="success-message" id="success-message">
+        Skvělé! Složila jsi všechna puzzle! 🎉
+        <button class="next-button" onclick="window.location.href='stranka4.html'">Pokračovat</button>
+    </div>
+
+    <script>
+        // Nastavení puzzle
+        const puzzleConfigs = [
+            {
+                id: 1,
+                imageUrl: 'obrazky na stranku 3/pláž - kopie.jpg',
+                frameId: 'puzzle-frame-1',
+                containerId: 'pieces-container-1'
+            },
+            {
+                id: 2,
+                imageUrl: 'obrazky na stranku 3/pusinky  - kopie.jpg',
+                frameId: 'puzzle-frame-2',
+                containerId: 'pieces-container-2'
+            },
+            {
+                id: 3,
+                imageUrl: 'obrazky na stranku 3/tatry - kopie.jpg',
+                frameId: 'puzzle-frame-3',
+                containerId: 'pieces-container-3'
+            }
+        ];
+        
+        let selectedPiece = null;
+
+        // Vytvoření dílků puzzle
+        function createPuzzlePieces(config) {
+            const container = document.getElementById(config.containerId);
+            const positions = Array.from({length: 9}, (_, i) => i);
+            
+            // Zamíchání pozic
+            for (let i = positions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [positions[i], positions[j]] = [positions[j], positions[i]];
+            }
+
+            positions.forEach(pos => {
+                const piece = document.createElement('div');
+                piece.className = 'puzzle-piece';
+                piece.dataset.position = pos;
+                piece.dataset.puzzleId = config.id;
+
+                const img = document.createElement('img');
+                img.src = config.imageUrl;
+                
+                // Nastavení správné části obrázku pro každý dílek
+                const x = (pos % 3) * -100;
+                const y = Math.floor(pos / 3) * -100;
+                img.style.transform = `translate(${x}px, ${y}px)`;
+
+                piece.appendChild(img);
+                piece.addEventListener('click', handlePieceClick);
+                container.appendChild(piece);
+            });
+        }
+
+        // Obsluha kliknutí na dílek
+        function handlePieceClick(e) {
+            const piece = e.currentTarget;
+            
+            if (selectedPiece === piece) {
+                // Zrušení výběru
+                piece.classList.remove('selected');
+                selectedPiece = null;
+            } else if (selectedPiece) {
+                // Výměna dílků
+                const oldParent = selectedPiece.parentElement;
+                const newParent = piece.parentElement;
+                
+                // Výměna mezi sloty nebo v kontejneru
+                newParent.replaceChild(selectedPiece, piece);
+                oldParent.appendChild(piece);
+                
+                selectedPiece.classList.remove('selected');
+                selectedPiece = null;
+                
+                checkWin();
+            } else {
+                // Výběr nového dílku
+                piece.classList.add('selected');
+                selectedPiece = piece;
+            }
+        }
+
+        // Kontrola vítězství pro jedno puzzle
+        function checkPuzzleWin(frameId) {
+            const slots = document.querySelectorAll(`#${frameId} .puzzle-slot`);
+            return Array.from(slots).every((slot, index) => {
+                const piece = slot.querySelector('.puzzle-piece');
+                return piece && parseInt(piece.dataset.position) === index;
+            });
+        }
+        
+        // Kontrola vítězství pro všechna puzzle
+        function checkAllWin() {
+            const allComplete = puzzleConfigs.every(config => 
+                checkPuzzleWin(config.frameId)
+            );
+            
+            if (allComplete) {
+                document.getElementById('success-message').style.display = 'block';
+            }
+        }
+
+        // Obsluha kliknutí na slot
+        function setupSlotClickHandling() {
+            document.querySelectorAll('.puzzle-slot').forEach(slot => {
+                slot.addEventListener('click', () => {
+                    if (selectedPiece && slot !== selectedPiece.parentElement) {
+                        // Zkontrolujeme, zda slot patří ke stejnému puzzle jako dílek
+                        const slotPuzzleId = slot.closest('.puzzle-frame').id.split('-')[2];
+                        const piecePuzzleId = selectedPiece.dataset.puzzleId;
+                        
+                        if (slotPuzzleId === piecePuzzleId) {
+                            const existingPiece = slot.querySelector('.puzzle-piece');
+                            const oldParent = selectedPiece.parentElement;
+                            
+                            if (existingPiece) {
+                                oldParent.appendChild(existingPiece);
+                            }
+                            
+                            slot.appendChild(selectedPiece);
+                            selectedPiece.classList.remove('selected');
+                            selectedPiece = null;
+                            
+                            checkAllWin();
+                        }
+                    }
+                });
+            });
+        }
+
+        // Inicializace hry
+        document.addEventListener('DOMContentLoaded', () => {
+            puzzleConfigs.forEach(config => createPuzzlePieces(config));
+            setupSlotClickHandling();
+        });
+    </script>
+
+    <script src="js/main.js" defer></script>
+    
+</body>
+</html>

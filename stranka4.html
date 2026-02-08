@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bludiště - Interaktivní hra</title>
+
+    <style>
+        .loader-wrapper {
+            background: linear-gradient(135deg, #ec407a 0%, #880e4f 100%);
+        }
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ec407a 0%, #880e4f 100%);
+            font-family: 'Arial', sans-serif;
+            color: white;
+            overflow: hidden;
+        }
+
+        .game-container {
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .maze-container {
+            position: relative;
+            margin: 0 auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            background: white;
+            border: 1px solid black;
+        }
+
+            #player {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background-image: url('obrazky na stranku 4/smile.png');  /* Pevně daný obrázek smile.png */
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            transition: transform 0.05s ease;
+            transform-origin: center;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #f50057;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #ff4081;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .instructions {
+            margin-top: 15px;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .win-message {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 100;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Bludiště</h1>
+        
+        <div class="maze-container" id="maze-container">
+            <canvas id="maze"></canvas>
+            <div id="player"></div>
+            <div class="win-message" id="win-message">Vyhrál jsi!</div>
+        </div>
+        
+        <div class="controls">
+            <button id="start-btn">Start</button>
+            <button id="restart-btn">Restart</button>
+        </div>
+        
+        <div class="instructions">
+            Ovládání: W (nahoru), A (doleva), S (dolů), D (doprava)
+        </div>
+
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Základní nastavení
+            const mazeContainer = document.getElementById('maze-container');
+            const canvas = document.getElementById('maze');
+            const ctx = canvas.getContext('2d');
+            const player = document.getElementById('player');
+            const winMessage = document.getElementById('win-message');
+            const startBtn = document.getElementById('start-btn');
+            const restartBtn = document.getElementById('restart-btn');
+            
+            // Konfigurace bludiště
+            const CELL_SIZE = 22;  // velikost jedné buňky v pixelech - menší pro přehlednější bludiště
+            const ROWS = 15;       // počet řádků v bludišti
+            const COLS = 23;       // počet sloupců v bludišti - šířka podobná typickému bludišti
+            
+            // Nastavení velikosti plátna
+            canvas.width = COLS * CELL_SIZE;
+            canvas.height = ROWS * CELL_SIZE;
+            mazeContainer.style.width = canvas.width + 'px';
+            mazeContainer.style.height = canvas.height + 'px';
+            
+            // Nastavení hry
+            let maze = [];          // Bludiště jako dvourozměrné pole (0 = cesta, 1 = zeď)
+            let playerPos = {x: 0, y: 0};  // Pozice hráče v pixelech
+            let playerCell = {row: 0, col: 0}; // Pozice hráče v buňkách
+            let goalCell = {row: 0, col: 0};   // Pozice cíle
+            let gameActive = false;  // Je hra aktivní?
+            let gameWon = false;     // Vyhrál hráč?
+            let lastTime = 0;        // Čas posledního snímku (pro animaci)
+            let keys = {             // Stisknuté klávesy
+                w: false, 
+                a: false, 
+                s: false, 
+                d: false
+            };
+            
+            // Generování bludiště - pevná struktura podobná obrázku
+            function generateMaze() {
+                // Inicializace bludiště - všechny buňky jsou cesty
+                maze = Array(ROWS).fill().map(() => Array(COLS).fill(0));
+                
+                // Vytvoříme pevně definované bludiště podobné tomu z obrázku
+                createPredefinedMaze();
+                
+                // Přidáme okraje (obvodové zdi)
+                for (let i = 0; i < COLS; i++) {
+                    maze[0][i] = 1;
+                    maze[ROWS - 1][i] = 1;
+                }
+                for (let i = 0; i < ROWS; i++) {
+                    maze[i][0] = 1;
+                    maze[i][COLS - 1] = 1;
+                }
+                
+                // Nastavíme start a cíl na opačných stranách bludiště
+                playerCell = {row: 1, col: 1};
+                goalCell = {row: 13, col: 21};
+                
+                // Zajistíme, že start a cíl jsou volné buňky
+                maze[playerCell.row][playerCell.col] = 0;
+                maze[goalCell.row][goalCell.col] = 0;
+                
+                // Zajistíme, že kolem startu a cíle jsou volná místa pro pohyb
+                maze[playerCell.row+1][playerCell.col] = 0;
+                maze[playerCell.row][playerCell.col+1] = 0;
+                maze[goalCell.row-1][goalCell.col] = 0;
+                maze[goalCell.row][goalCell.col-1] = 0;
+            }
+            
+            // Vytvoření jednoduché a logické struktury bludiště
+            function createPredefinedMaze() {
+                // Nejprve vytvoříme celé bludiště jako zeď
+                for (let row = 0; row < ROWS; row++) {
+                    for (let col = 0; col < COLS; col++) {
+                        maze[row][col] = 1; // Vše je zeď
+                    }
+                }
+                
+                // Poté vytvoříme hlavní cesty (0 = cesta)
+                // Budeme postupně vytvářet cesty pomocí souřadnic
+                
+                // Hlavní cesta od startu
+                const paths = [
+                    // Startovní bod a první chodba doprava
+                    [1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7],
+                    
+                    // První odbočka dolů
+                    [2, 7], [3, 7], [3, 6], [3, 5], [3, 4], [3, 3],
+                    
+                    // Pokračování cesty vpravo
+                    [3, 8], [3, 9], [3, 10], [3, 11], 
+                    [4, 11], [5, 11], [5, 10], [5, 9], [5, 8], [5, 7],
+                    
+                    // Cesta uprostřed bludiště
+                    [5, 6], [5, 5], [5, 4], [5, 3],
+                    [6, 3], [7, 3], [7, 4], [7, 5], [7, 6], [7, 7], [7, 8],
+                    
+                    // Cesta k pravému okraji
+                    [7, 9], [7, 10], [7, 11], [7, 12], [7, 13],
+                    [6, 13], [5, 13], [5, 14], [5, 15], [5, 16], [5, 17],
+                    
+                    // Pokračování dolů
+                    [6, 17], [7, 17], [8, 17], [9, 17],
+                    [9, 16], [9, 15], [9, 14], [9, 13], [9, 12], [9, 11],
+                    
+                    // Spodní část bludiště
+                    [9, 10], [9, 9], [9, 8], [9, 7], [9, 6], [9, 5], [9, 4], [9, 3],
+                    [10, 3], [11, 3], [11, 4], [11, 5], [11, 6], [11, 7],
+                    
+                    // Cesta k cíli
+                    [11, 8], [11, 9], [11, 10], [11, 11], [11, 12], [11, 13],
+                    [11, 14], [11, 15], [11, 16], [11, 17], [11, 18], [11, 19], [11, 20], [11, 21],
+                    [10, 21], [9, 21], [8, 21], [7, 21], [6, 21], [5, 21], [4, 21], [3, 21],
+                    
+                    // Cesta k cíli
+                    [3, 20], [3, 19], [3, 18], [3, 17], [3, 16], [3, 15], [3, 14], [3, 13],
+                    
+                    // Alternativní cesty pro větší zajímavost
+                    [1, 9], [1, 10], [1, 11], [1, 12], [1, 13], 
+                    [2, 13], [3, 13], 
+                    
+                    [7, 15], [8, 15], [8, 14], [8, 13], [8, 12], [8, 11],
+                    [7, 1], [7, 2],
+                    [9, 1], [9, 2], [10, 1], [11, 1],
+                    [13, 3], [13, 4], [13, 5], [13, 6], [13, 7], [13, 8], [13, 9], [13, 10],
+                    [13, 11], [13, 12], [13, 13], [13, 14], [13, 15], [13, 16], [13, 17], [13, 18], [13, 19], 
+                    [13, 20], [13, 21],
+                    
+                    // Několik dalších menších chodeb pro alternativní cesty
+                    [1, 17], [1, 18], [1, 19], [1, 20], [1, 21],
+                    [2, 3], [2, 9], [2, 15], [2, 19],
+                    [4, 1], [4, 5], [4, 9], [4, 13], [4, 17],
+                    [5, 19], [6, 7], [6, 11], [6, 15], [6, 19],
+                    [8, 1], [8, 5], [8, 9], [8, 19],
+                    [10, 7], [10, 11], [10, 15], [10, 19],
+                    [12, 3], [12, 7], [12, 11], [12, 15], [12, 19],
+                ];
+                
+                // Aplikujeme cesty do bludiště
+                for (const [row, col] of paths) {
+                    if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
+                        maze[row][col] = 0; // 0 = cesta
+                    }
+                }
+            }
+            
+            // Vykreslení bludiště
+            function drawMaze() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Vyplníme pozadí bílou barvou
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Vykreslíme nejprve všechny buňky podle jejich typu
+                for (let row = 0; row < ROWS; row++) {
+                    for (let col = 0; col < COLS; col++) {
+                        const x = col * CELL_SIZE;
+                        const y = row * CELL_SIZE;
+                        
+                        if (maze[row][col] === 1) {
+                            // Zeď - vykreslíme jako černý obdélník
+                            ctx.fillStyle = 'black';
+                            ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+                        } else {
+                            // Cesta - vykreslíme jako bílý obdélník
+                            ctx.fillStyle = 'white';
+                            ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+                        }
+                    }
+                }
+                
+                // Vykreslíme cíl
+                const goalX = goalCell.col * CELL_SIZE;
+                const goalY = goalCell.row * CELL_SIZE;
+                ctx.fillStyle = '#4CAF50';
+                ctx.fillRect(goalX, goalY, CELL_SIZE, CELL_SIZE);
+                
+                // Přidáme symbol cíle (vlajku)
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.moveTo(goalX + CELL_SIZE * 0.25, goalY + CELL_SIZE * 0.25);
+                ctx.lineTo(goalX + CELL_SIZE * 0.25, goalY + CELL_SIZE * 0.75);
+                ctx.lineTo(goalX + CELL_SIZE * 0.75, goalY + CELL_SIZE * 0.5);
+                ctx.closePath();
+                ctx.fill();
+            }
+            
+            // Aktualizace pozice hráče
+            function updatePlayerPosition() {
+                player.style.left = playerPos.x + 'px';
+                player.style.top = playerPos.y + 'px';
+            }
+            
+            // Kontrola kolizí
+            function checkCollision(x, y) {
+                // Převedeme pixely na buňky
+                const row = Math.floor(y / CELL_SIZE);
+                const col = Math.floor(x / CELL_SIZE);
+                
+                // Kontrola, zda buňka není zeď
+                return row >= 0 && row < ROWS && col >= 0 && col < COLS && maze[row][col] !== 1;
+            }
+            
+            // Pohyb hráče
+            function movePlayer(deltaTime) {
+                if (!gameActive || gameWon) return;
+                
+                const speed = 0.15 * deltaTime; // Rychlost pohybu (pixely za snímek)
+                let newX = playerPos.x;
+                let newY = playerPos.y;
+                
+                if (keys.w) newY -= speed;
+                if (keys.s) newY += speed;
+                if (keys.a) newX -= speed;
+                if (keys.d) newX += speed;
+                
+                // Kontrola kolizí v novém směru
+                const playerSize = parseInt(player.style.width) || 30;
+                const halfSize = playerSize / 2;
+                
+                // Kontrola kolizí v každém směru zvlášť
+                if (keys.w && checkCollision(playerPos.x, newY - halfSize)) playerPos.y = newY;
+                if (keys.s && checkCollision(playerPos.x, newY + halfSize)) playerPos.y = newY;
+                if (keys.a && checkCollision(newX - halfSize, playerPos.y)) playerPos.x = newX;
+                if (keys.d && checkCollision(newX + halfSize, playerPos.y)) playerPos.x = newX;
+                
+                // Aktualizace aktuální buňky hráče
+                playerCell.row = Math.floor(playerPos.y / CELL_SIZE);
+                playerCell.col = Math.floor(playerPos.x / CELL_SIZE);
+                
+                // Kontrola, zda hráč dosáhl cíle
+                if (playerCell.row === goalCell.row && playerCell.col === goalCell.col) {
+                    gameWon = true;
+                    winMessage.style.display = 'block';
+                    
+                    // Přidáme přesměrování na stranka5.html po krátké prodlevě
+                    setTimeout(() => {
+                        alert('Gratulace! Dokončili jste bludiště!');
+                        window.location.href = 'stranka5.html';
+                    }, 1000);
+                }
+                
+                updatePlayerPosition();
+            }
+            
+            // Hlavní herní smyčka
+            function gameLoop(timestamp) {
+                if (!lastTime) lastTime = timestamp;
+                const deltaTime = timestamp - lastTime;
+                lastTime = timestamp;
+                
+                movePlayer(deltaTime);
+                
+                if (gameActive && !gameWon) {
+                    requestAnimationFrame(gameLoop);
+                }
+            }
+            
+            // Funkce pro start hry
+            function startGame() {
+                // Generování bludiště
+                generateMaze();
+                drawMaze();
+                
+                // Nastavení počáteční pozice hráče
+                playerPos.x = playerCell.col * CELL_SIZE + CELL_SIZE/2;
+                playerPos.y = playerCell.row * CELL_SIZE + CELL_SIZE/2;
+                
+                // Nastavení velikosti hráče
+                player.style.width = CELL_SIZE * 0.8 + 'px';
+                player.style.height = CELL_SIZE * 0.8 + 'px';
+                player.style.marginLeft = -(CELL_SIZE * 0.8)/2 + 'px';
+                player.style.marginTop = -(CELL_SIZE * 0.8)/2 + 'px';
+                
+                updatePlayerPosition();
+                player.style.display = 'block';
+                
+                // Reset stavu hry
+                gameActive = true;
+                gameWon = false;
+                winMessage.style.display = 'none';
+                
+                // Start herní smyčky
+                lastTime = 0;
+                requestAnimationFrame(gameLoop);
+            }
+            
+            // Event listenery pro klávesnici
+            document.addEventListener('keydown', function(e) {
+                if (!gameActive) return;
+                
+                switch(e.key.toLowerCase()) {
+                    case 'w': keys.w = true; break;
+                    case 'a': keys.a = true; break;
+                    case 's': keys.s = true; break;
+                    case 'd': keys.d = true; break;
+                }
+            });
+            
+            document.addEventListener('keyup', function(e) {
+                switch(e.key.toLowerCase()) {
+                    case 'w': keys.w = false; break;
+                    case 'a': keys.a = false; break;
+                    case 's': keys.s = false; break;
+                    case 'd': keys.d = false; break;
+                }
+            });
+            
+            // Event listenery pro tlačítka
+            startBtn.addEventListener('click', startGame);
+            restartBtn.addEventListener('click', startGame);
+            
+            // První spuštění hry
+            player.style.display = 'none';
+
+            // Skrýt loader po načtení
+            window.addEventListener('load', function() {
+                const loader = document.querySelector('.loader-wrapper');
+                if (loader) {
+                    setTimeout(() => {
+                        loader.style.opacity = '0';
+                        setTimeout(() => {
+                            loader.style.display = 'none';
+                        }, 500);
+                    }, 1000);
+                }
+            });
+        });
+    </script>
+
+    <script src="js/main.js" defer></script>
+    </body>
+</html>

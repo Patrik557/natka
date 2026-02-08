@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stranka 6</title>
+        <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ec407a 0%, #880e4f 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            text-align: center;
+            position: relative;
+            padding: 40px;
+        }
+
+        .title-box {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px 40px;
+            border-radius: 15px;
+            border: 3px solid white;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .heart-image-left {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            left: -30px;
+            top: -30px;
+            z-index: 3;
+        }
+
+        .heart-image-right {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            right: -30px;
+            top: -30px;
+            z-index: 3;
+        }
+
+        .title-text {
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .content {
+            margin-top: 40px;
+            font-size: 20px;
+            line-height: 1.8;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .paragraph {
+            margin-bottom: 25px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-out forwards;
+            animation-delay: calc(var(--delay, 0) * 1s);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .next-button {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            border: 2px solid white;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .next-button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border: 2px solid white;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .next-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const paragraphs = document.querySelectorAll('.paragraph');
+            paragraphs.forEach((p, index) => {
+                p.style.setProperty('--delay', index * 0.5);
+            });
+            
+            // Přidat kód pro skrytí loaderu
+            const loader = document.querySelector('.loader-wrapper');
+            if (loader) {
+                window.addEventListener('load', function() {
+                    setTimeout(() => {
+                        loader.style.opacity = '0';
+                        loader.style.transition = 'opacity 0.5s ease-out';
+                        setTimeout(() => {
+                            loader.style.display = 'none';
+                        }, 500);
+                    }, 1000);
+                });
+            }
+        });
+    </script>
+    <div class="container">
+        <div class="title-box">
+            <img src="obrazky na stranku 5/srdce.png" alt="Srdce vlevo" class="heart-image-left">
+            <img src="obrazky na stranku 5/srdce.png" alt="Srdce vpravo" class="heart-image-right">
+            <h1 class="title-text">❤️ CO PRO MĚ ZNAMENÁŠ ❤️</h1>
+        </div>
+
+        <div class="content">
+            <div class="paragraph fade-in">
+                Lásko, když se řekne slovo láska a to, co pro mě znamenáš, tak si to nejde ani představit. Jsi pro mě celý vesmír, můj klid v duši, můj domov. ❤️
+            </div>
+            <div class="paragraph fade-in">
+                Udělal bych cokoliv proto, abys byla šťastná. Chci s tebou budovat budoucnost a chci s tebou procestovat celý svět. Chci s tebou mít nespočet krásných zážitků a vytvářet nezapomenutelné vzpomínky. ❤️
+            </div>
+            <div class="paragraph fade-in">
+                Nikdy jsem necítil tak moc jako s tebou. Udělala jsi ze mě nového člověka, který nemyslí jen na blbosti, ale už buduje budoucnost a má pro koho žít. Všechny věci, které dělám, jsou pro nás, abychom byli šťastní a měli krásný život.
+            </div>
+            <div class="paragraph fade-in">
+                Slibuju, že se o nás postarám a že tu budu vždy pro tebe. Napiš mi klidně o půlnoci, já ti napíšu - jsem tu pro tebe 24/7.
+            </div>
+            <div class="paragraph fade-in">
+                Miluju tě lásko extrémně moc a ještě víc, a vždycky budu, to ti slibuju. ❤️
+            </div>
+        </div>
+
+        <a href="stranka7.html" class="next-button">Pokračovat ❤️</a>
+    </div>
+
+    <div class="mute-speaker">
+          <svg version="1.0" viewBox="0 0 75 75" stroke="#fff" stroke-width="5">
+            <path d="m39,14-17,15H6V48H22l17,15z" fill="#fff" stroke-linejoin="round"></path>
+            <path d="m49,26 20,24m0-24-20,24" fill="#fff" stroke-linecap="round"></path>
+          </svg>
+        </div>
+      </label>
+    </div>
+
+    <script src="js/main.js" defer></script>
+        <script src="js/add-loader.js" defer></script>
+</body>
+</html>

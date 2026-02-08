@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stranka 5</title>
+        <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 150vh;
+            background: linear-gradient(135deg, #ec407a 0%, #880e4f 100%);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .heart-image-left {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            left: -30px;
+            top: -30px;
+            z-index: 3;
+        }
+
+        .heart-image-right {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            right: -30px;
+            top: -30px;
+            z-index: 3;
+        }
+
+        .container {
+            width: 100%;
+            min-height: 150vh;
+            position: relative;
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .title-box {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px 40px;
+            border-radius: 15px;
+            border: 3px solid white;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .kukuc-image {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            left: 100px;
+            top: -30px;
+            z-index: 3;
+        }
+
+        .title-text {
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .images-section {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            position: relative;
+        }
+
+        .image-container {
+            width: 350px;
+            height: 500px;
+            position: relative;
+        }
+
+        .image-container:first-child {
+            margin-right: auto;
+            margin-left: 0;
+        }
+
+        .image-container:last-child {
+            margin-left: auto;
+            margin-right: 0;
+        }
+
+        .love-letter {
+            position: absolute;
+            left: 50%;
+            top: 65%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 18px;
+            z-index: 1;
+            width: 500px;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            margin-top: 100px;
+        }
+
+        .paragraph {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-out forwards;
+            animation-delay: calc(var(--delay, 0) * 1s);
+        }
+
+        .next-button {
+            display: inline-block;
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border: 2px solid white;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 40px;
+            transition: all 0.3s ease;
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .next-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-50%) scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .text-placeholder {
+            width: 300px;
+            height: 200px;
+            margin: 0 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 18px;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: 3px solid white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .image-container img:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const paragraphs = document.querySelectorAll('.paragraph');
+            paragraphs.forEach((p, index) => {
+                p.style.setProperty('--delay', index * 0.5);
+            });
+        });
+    </script>
+    <div class="container">
+        <!-- Nadpis v boxu -->
+        <div class="title-box">
+            <img src="obrazky na stranku 5/srdce.png" alt="Srdce vlevo" class="heart-image-left">
+            <img src="obrazky na stranku 5/srdce.png" alt="Srdce vpravo" class="heart-image-right">
+            <h1 class="title-text">JAK MOC JSI KRÁSNÁ</h1>
+        </div>
+
+        <!-- Sekce s fotkami -->
+        <div class="images-section">
+            <div class="image-container">
+                <img src="obrazky na stranku 5/brýle.jpg" alt="Brýle">
+            </div>
+            <div class="love-letter">
+                <div class="paragraph fade-in">
+                    Lásko, píšu tohle v ten den kdy jsme si volali jak jsi byla v Indii a já zrovna přijel do Tater...
+                </div>
+                <div class="paragraph fade-in">
+                    Lásko ani nevíš jak moc jsi krásná, jak moc ti to sluší. Kdybych mohl, tak bych se na tebe díval celý život, bych na tobě mohl oči nechat. Jsi prostě dokonalá.
+                </div>
+                <div class="paragraph fade-in">
+                    Tvoje tvářička kterou bych zlíbal, tvoje očička které jsou zářivá vždy když se usměješ. Máš moc překrásné očka, jsou tak křišťálová.
+                </div>
+                <div class="paragraph fade-in">
+                    Tvoje krásné rty které tak krásně líbají, tvoje vlásky do kterých bych se zabuchal a muchlal bych je celý den, a jak ti voní - pane bože, ta vůně mě tak uklidňuje.
+                </div>
+                <div class="paragraph fade-in">
+                    Tvé krásné tělíčko které je perfektní. Říkej si co chceš, ale máš moc krásné tělíčko. Vždy se chci tak moc přitulit a nikdy tě nepustit.
+                </div>
+                <div class="paragraph fade-in">
+                    Jak se do tebe zabouchám, tak se cítím tak bezpečně. Prostě v mých očích jsi ta nejkrásnější dívka na světě, mezi všema vypadáš jako moje zářivá hvězdička.
+                </div>
+                <div class="paragraph fade-in">
+                    Lásko, když tohle píšu, tak se mi chce plakat i smutkem, ale tím jak moc mi tvoje tělíčko chybí, že nemám se do koho zamuchlat...
+                </div>
+            </div>
+            <div class="image-container">
+                <img src="obrazky na stranku 5/pt.jpg" alt="PT">
+            </div>
+        </div>
+        <a href="stranka6.html" class="next-button">Pokračovat ❤️</a>
+    </div>
+
+    <div class="mute-speaker">
+          <svg version="1.0" viewBox="0 0 75 75" stroke="#fff" stroke-width="5">
+            <path d="m39,14-17,15H6V48H22l17,15z" fill="#fff" stroke-linejoin="round"></path>
+            <path d="m49,26 20,24m0-24-20,24" fill="#fff" stroke-linecap="round"></path>
+          </svg>
+        </div>
+      </label>
+    </div>
+
+    <script src="js/main.js" defer></script>
+    </body>
+</html>

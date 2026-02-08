@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stranka 8</title>
+        <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ec407a 0%, #880e4f 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            text-align: center;
+            position: relative;
+            padding: 40px;
+        }
+
+        .title-box {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px 40px;
+            border-radius: 15px;
+            border: 3px solid white;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .title-text {
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .content {
+            margin-top: 40px;
+            font-size: 20px;
+            line-height: 1.8;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .paragraph {
+            margin-bottom: 25px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-out forwards;
+            animation-delay: calc(var(--delay, 0) * 1s);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    </head>
+<body>
+    <div class="container">
+        <div class="title-box">
+            <h1 class="title-text">Vítej na stránce 8 💕</h1>
+        </div>
+        <div class="content">
+            <div class="paragraph fade-in" style="--delay: 0">
+                Gratuluji! Úspěšně jsi dokončila všechny otázky!
+            </div>
+            <div class="paragraph fade-in" style="--delay: 1">
+                Doufám, že jsi si prošla krásnou cestu vzpomínek.
+            </div>
+            <!-- Sem můžete přidat další obsah -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Zde můžete přidat další JavaScript funkcionalitu
+        });
+    </script>
+</body>
+</html>

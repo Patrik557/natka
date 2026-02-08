@@ -1,0 +1,927 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>DOTAZNÍK</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        background: linear-gradient(135deg, #ec407a 0%, #880e4f 100%);
+        font-family: 'Inter', sans-serif;
+        overflow-x: hidden;
+        position: relative;
+      }
+      
+      .page-container {
+        width: 100%;
+        max-width: 1000px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        margin-top: 30px;
+      }
+      
+      /* Kontejner pro nadpis */
+      .quiz-title-container {
+        background: linear-gradient(to bottom, #ffffff 0%, #fdf2f7 70%, #f8c7d8 100%);
+        border-radius: 15px;
+        padding: 15px 40px;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(255, 255, 255, 0.6);
+        position: relative;
+        overflow: hidden;
+        max-width: 600px; /* Zvětšeno podle nákresu */
+        text-align: center;
+        z-index: 10;
+        animation: pulse 3s ease-in-out infinite;
+        transition: all 0.3s ease;
+      }
+      
+      .quiz-title-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3), 0 0 0 4px rgba(255, 255, 255, 0.8);
+      }
+      
+      .quiz-title {
+        position: relative;
+        z-index: 10;
+        font-size: 2.5rem;
+        font-weight: 700;
+        letter-spacing: 4px;
+        text-align: center;
+        margin: 0;
+        background: linear-gradient(45deg, #d81b60, #ff5c8d, #d81b60);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: shimmer 3s linear infinite;
+      }
+      
+      @keyframes shimmer {
+        0% {
+          background-position: -100% center;
+        }
+        100% {
+          background-position: 200% center;
+        }
+      }
+      
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.03);
+        }
+      }
+      
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      
+      @keyframes shine {
+        0% {
+          left: -100%;
+          opacity: 0;
+        }
+        50% {
+          opacity: 0.3;
+        }
+        100% {
+          left: 100%;
+          opacity: 0;
+        }
+      }
+      
+      .quiz-title-container::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 65%);
+        animation: rotate 8s linear infinite;
+      }
+      
+      .quiz-title-container::after {
+        content: "";
+        position: absolute;
+        top: -100%;
+        left: -100%;
+        width: 50px;
+        height: 300%;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.8) 50%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        transform: rotate(30deg);
+        animation: shine 3s ease-in-out infinite;
+      }
+      
+      /* Srdíčka po celém rámečku - náhodně rozmístěné - hustěji */
+      .heart {
+        position: absolute;
+        width: 24px; /* Zmenšeno pro lepší hustotu */
+        height: 24px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        z-index: 0; /* Defaultně za textem */
+      }
+      
+      /* Základní zobrazení obrázku */
+      .heart img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      }
+      
+      /* Náhodné pozicování srdíček - horní okraj */
+      .heart-1 {
+        top: -12px;
+        left: 10%;
+        transform: rotate(-15deg);
+      }
+      
+      .heart-2 {
+        top: -14px;
+        left: 25%;
+        transform: rotate(10deg);
+      }
+      
+      .heart-3 {
+        top: -13px;
+        left: 42%;
+        transform: rotate(-5deg);
+      }
+      
+      .heart-4 {
+        top: -12px;
+        left: 58%;
+        transform: rotate(15deg);
+      }
+      
+      .heart-5 {
+        top: -13px;
+        right: 10%;
+        transform: rotate(-10deg);
+      }
+      
+      /* Srdíčka - levý okraj */
+      .heart-6 {
+        top: 15%;
+        left: -12px;
+        transform: rotate(25deg);
+      }
+      
+      .heart-7 {
+        top: 35%;
+        left: -13px;
+        transform: rotate(-20deg);
+      }
+      
+      .heart-8 {
+        top: 55%;
+        left: -12px;
+        transform: rotate(5deg);
+      }
+      
+      .heart-9 {
+        top: 75%;
+        left: -13px;
+        transform: rotate(-15deg);
+      }
+      
+      /* Srdíčka - pravý okraj */
+      .heart-10 {
+        top: 18%;
+        right: -12px;
+        transform: rotate(-10deg);
+      }
+      
+      .heart-11 {
+        top: 38%;
+        right: -13px;
+        transform: rotate(5deg);
+      }
+      
+      .heart-12 {
+        top: 58%;
+        right: -12px;
+        transform: rotate(-10deg);
+      }
+      
+      .heart-13 {
+        top: 78%;
+        right: -13px;
+        transform: rotate(8deg);
+      }
+      
+      /* Srdíčka - spodní okraj */
+      .heart-14 {
+        bottom: -12px;
+        left: 12%;
+        transform: rotate(-5deg);
+      }
+      
+      .heart-15 {
+        bottom: -13px;
+        left: 28%;
+        transform: rotate(12deg);
+      }
+      
+      .heart-16 {
+        bottom: -12px;
+        left: 45%;
+        transform: rotate(-8deg);
+      }
+      
+      .heart-17 {
+        bottom: -13px;
+        right: 30%;
+        transform: rotate(7deg);
+      }
+      
+      .heart-18 {
+        bottom: -12px;
+        right: 12%;
+        transform: rotate(-11deg);
+      }
+      
+      /* Srdíčka uvnitř rámečku */
+      .heart-19 {
+        top: 20%;
+        left: 15%;
+        transform: rotate(15deg);
+      }
+      
+      .heart-20 {
+        top: 15%;
+        right: 18%;
+        transform: rotate(-8deg);
+      }
+      
+      .heart-21 {
+        top: 25%;
+        left: 38%;
+        transform: rotate(5deg);
+      }
+      
+      .heart-22 {
+        top: 32%;
+        right: 33%;
+        transform: rotate(-12deg);
+      }
+      
+      .heart-23 {
+        top: 45%;
+        left: 18%;
+        transform: rotate(-7deg);
+      }
+      
+      .heart-24 {
+        top: 52%;
+        right: 22%;
+        transform: rotate(9deg);
+      }
+      
+      .heart-25 {
+        top: 65%;
+        left: 26%;
+        transform: rotate(3deg);
+      }
+      
+      .heart-26 {
+        top: 68%;
+        right: 16%;
+        transform: rotate(-4deg);
+      }
+      
+      /* Kontejner pro nadpis */
+      .quiz-title-container {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        padding: 15px 40px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+        max-width: 300px;
+        text-align: center;
+      }
+      
+      /* Text má vyšší z-index, takže je nad srdíčky */
+      .quiz-title {
+        position: relative;
+        z-index: 10;
+        margin: 10px 0;
+        color: #d81b60;
+        font-size: 2.2rem;
+      }
+      
+      /* Tento blok bude odstraněn, protože níže je duplikát */
+      
+      /* Vnější kontejner pro kvíz */
+      .quiz-outer-container {
+        width: 100%;
+        max-width: 800px;
+        margin-top: 20px;
+        position: relative;
+      }
+      
+      /* Styl pro kvíz */
+      .quiz-container {
+        background: linear-gradient(to bottom, #ffffff 0%, #fce4ec 50%, #f8bbd0 100%);
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(255, 255, 255, 0.6);
+        width: 100%;
+        margin: 0 auto 20px;
+        position: relative;
+        z-index: 10;
+        transition: all 0.4s ease;
+        border: 2px solid transparent;
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+      }
+      
+      .quiz-container:hover {
+        box-shadow: 0 12px 30px rgba(216, 27, 96, 0.4), 0 0 0 4px rgba(255, 255, 255, 0.8);
+        transform: translateY(-3px);
+      }
+      
+      .question {
+        margin-bottom: 25px;
+        border-bottom: 2px solid #f48fb1;
+        padding-bottom: 15px;
+        padding-right: 15px;
+        padding-left: 15px;
+        transition: transform 0.3s ease, border-color 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start; /* Zarovnání doleva */
+        width: 100%;
+      }
+      
+      .question:hover {
+        transform: translateX(5px);
+        border-bottom-color: #d81b60;
+      }
+      
+      .question h3 {
+        color: #d81b60;
+        margin-bottom: 12px;
+        font-weight: 600;
+        position: relative;
+        display: inline-block;
+        transition: transform 0.3s ease;
+        width: 100%;
+        text-align: left; /* Zarovnání textu otázky doleva */
+        padding-left: 5px; /* Malé odsazení textu zleva */
+      }
+      
+      .question h3::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -5px;
+        width: 0;
+        height: 2px;
+        background-color: #d81b60;
+        transition: width 0.3s ease;
+      }
+      
+      .question:hover h3::after {
+        width: 100%;
+      }
+      
+      .options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 8px;
+        transition: background-color 0.2s;
+      }
+      
+      .option:hover {
+        background-color: #fce4ec;
+      }
+      
+      .option input[type="radio"] {
+        cursor: pointer;
+        width: 18px;
+        height: 18px;
+        accent-color: #e91e63;
+      }
+      
+      .option label {
+        cursor: pointer;
+        font-size: 16px;
+        flex-grow: 1;
+      }
+      
+      .quiz-button {
+        background: linear-gradient(45deg, #f06292 0%, #ec407a 100%);
+        color: white;
+        border: none;
+        padding: 12px 28px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.4s ease;
+        box-shadow: 0 4px 12px rgba(236, 64, 122, 0.4);
+        margin-top: 15px;
+        margin-right: 12px;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+      }
+      
+      .quiz-button:before {
+        content: "";
+        position: absolute;
+        left: -100%;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: all 0.6s ease;
+        z-index: -1;
+      }
+      
+      .quiz-button:hover {
+        transform: translateY(-3px) scale(1.03);
+        box-shadow: 0 7px 20px rgba(236, 64, 122, 0.6);
+      }
+      
+      .quiz-button:hover:before {
+        left: 100%;
+      }
+      
+      .quiz-button:active {
+        transform: translateY(1px);
+      }
+      
+      #quiz-results {
+        text-align: center;
+        padding: 25px;
+        background: linear-gradient(to bottom, #ffffff 0%, #fce4ec 50%, #f8bbd0 100%);
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(255, 255, 255, 0.6);
+        transition: all 0.4s ease;
+      }
+      
+      #quiz-results h2 {
+        color: #d81b60;
+        margin-bottom: 15px;
+        position: relative;
+        display: inline-block;
+      }
+      
+      #quiz-results h2::after {
+        content: "";
+        position: absolute;
+        bottom: -8px;
+        left: 10%;
+        width: 80%;
+        height: 2px;
+        background: linear-gradient(to right, transparent, #d81b60, transparent);
+      }
+      
+      #results-message {
+        font-size: 18px;
+        line-height: 1.7;
+        margin-bottom: 25px;
+        color: #5d4037;
+      }
+      
+      .hidden {
+        display: none;
+      }
+      
+      /* Kontejner pro srdíčka na pozadí */
+      .hearts-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+        pointer-events: none; /* Aby srdíčka neblokovaly klikání */
+      }
+      
+      /* Základní styl pro srdíčka v pozadí */
+      .heart-bg {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        z-index: -1;
+        transform: rotate(var(--rotation, 0deg));
+        opacity: 0.7;
+        pointer-events: none;
+      }
+      
+      /* Různé velikosti srdíček pro větší rozmanitost */
+      .heart-bg:nth-child(3n) {
+        width: 25px;
+        height: 25px;
+      }
+      
+      .heart-bg:nth-child(3n+1) {
+        width: 35px;
+        height: 35px;
+      }
+      
+      .heart-bg:nth-child(5n) {
+        width: 20px;
+        height: 20px;
+      }
+      
+      /* Náhodné rotace */
+      .heart-bg:nth-child(4n) { --rotation: 15deg; }
+      .heart-bg:nth-child(4n+1) { --rotation: -10deg; }
+      .heart-bg:nth-child(4n+2) { --rotation: 5deg; }
+      .heart-bg:nth-child(4n+3) { --rotation: -20deg; }
+      
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      
+      /* Animace pro plovoucí srdíčka na pozadí */
+      @keyframes float {
+        0% {
+          transform: translateY(0) rotate(var(--rotation));
+        }
+        50% {
+          transform: translateY(-10px) rotate(calc(var(--rotation) + 5deg));
+        }
+        100% {
+          transform: translateY(0) rotate(var(--rotation));
+        }
+      }
+      
+      /* Různé animace pro různé skupiny srdíček */
+      .heart-bg:nth-child(3n) {
+        animation: float 8s ease-in-out infinite;
+        animation-delay: calc(var(--n) * -0.5s);
+      }
+      
+      .heart-bg:nth-child(3n+1) {
+        animation: float 10s ease-in-out infinite reverse;
+        animation-delay: calc(var(--n) * -0.7s);
+      }
+      
+      .heart-bg:nth-child(3n+2) {
+        animation: float 6s ease-in-out infinite;
+        animation-delay: calc(var(--n) * -0.3s);
+      }
+      
+      /* Nastavení průhlednosti pro každé srdíčko */
+      .heart-bg:nth-child(5n) { opacity: 0.4; }
+      .heart-bg:nth-child(5n+1) { opacity: 0.6; }
+      .heart-bg:nth-child(5n+2) { opacity: 0.5; }
+      .heart-bg:nth-child(5n+3) { opacity: 0.7; }
+      .heart-bg:nth-child(5n+4) { opacity: 0.3; }
+      
+      /* Styl pro obrázky srdíček */
+      .heart-bg img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+      }
+      
+      /* Styl pro input pole */
+      .answer-input {
+        margin-top: 15px;
+        position: relative;
+        width: 90%; /* Upravená šířka podle červené čáry */
+        margin-left: 0; /* Zarovnání doleva */
+        margin-right: auto;
+      }
+      
+      .input {
+        background-color: #212121;
+        width: 100%;
+        height: 40px;
+        padding: 12px 15px;
+        border: 2px solid white;
+        border-radius: 8px;
+        color: white;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+      
+      .input:hover {
+        border-color: #ff80ab;
+        box-shadow: 0 0 5px rgba(255, 108, 199, 0.3);
+      }
+      
+      .input:focus {
+        color: #ff6ec7;
+        background-color: #212121;
+        outline: none;
+        border-color: #ff6ec7;
+        box-shadow: 0 0 0 3px rgba(255, 110, 199, 0.25), -3px -3px 15px #ff6ec7;
+        transition: all 0.3s ease;
+      }
+      
+      .input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+        transition: all 0.3s ease;
+      }
+      
+      .input:focus::placeholder {
+        color: rgba(255, 110, 199, 0.6);
+        transform: translateX(5px);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Chaoticky rozmístěná srdíčka na pozadí -->
+    <div class="hearts-background">
+      <!-- První řada srdíček -->
+      <div class="heart-bg" style="top: 5%; left: 8%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 12%; left: 15%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 4%; left: 25%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 18%; left: 32%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 7%; left: 42%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 16%; left: 48%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 3%; left: 56%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 11%; left: 64%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 5%; left: 73%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 14%; left: 82%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 8%; left: 90%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      
+      <!-- Druhá řada srdíček -->
+      <div class="heart-bg" style="top: 22%; left: 5%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 28%; left: 12%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 25%; left: 22%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 30%; left: 29%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 26%; left: 38%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 31%; left: 45%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 24%; left: 53%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 29%; left: 61%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 23%; left: 69%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 27%; left: 76%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 21%; left: 85%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 27%; left: 94%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      
+      <!-- Třetí řada srdíček -->
+      <div class="heart-bg" style="top: 36%; left: 7%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 41%; left: 14%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 37%; left: 23%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 43%; left: 31%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 38%; left: 40%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 44%; left: 48%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 39%; left: 57%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 45%; left: 65%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 40%; left: 74%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 46%; left: 81%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 42%; left: 91%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      
+      <!-- Čtvrtá řada srdíček -->
+      <div class="heart-bg" style="top: 50%; left: 4%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 54%; left: 13%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 49%; left: 21%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 56%; left: 28%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 51%; left: 36%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 57%; left: 44%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 52%; left: 52%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 58%; left: 59%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 53%; left: 67%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 59%; left: 76%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 55%; left: 84%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 51%; left: 93%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      
+      <!-- Pátá řada srdíček -->
+      <div class="heart-bg" style="top: 64%; left: 6%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 69%; left: 11%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 66%; left: 19%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 71%; left: 26%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 67%; left: 34%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 72%; left: 42%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 68%; left: 50%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 73%; left: 58%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 70%; left: 66%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 65%; left: 74%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 71%; left: 82%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 67%; left: 90%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      
+      <!-- Šestá řada srdíček -->
+      <div class="heart-bg" style="top: 78%; left: 3%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 84%; left: 10%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 80%; left: 17%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 86%; left: 24%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 81%; left: 31%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 87%; left: 39%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 82%; left: 47%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 88%; left: 55%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 83%; left: 63%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 79%; left: 71%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 85%; left: 79%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 82%; left: 88%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 88%; left: 96%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      
+      <!-- Náhodně rozmístěná srdíčka pro větší hustotu a chaos -->
+      <div class="heart-bg" style="top: 19%; left: 18%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 33%; left: 9%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 62%; left: 47%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 75%; left: 92%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 15%; left: 57%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 48%; left: 89%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 91%; left: 16%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 77%; left: 36%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 9%; left: 33%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 35%; left: 72%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+      <div class="heart-bg" style="top: 93%; left: 68%;"><img src="obrazky na stanku 2/srdíčko.png" alt="Srdíčko"></div>
+      <div class="heart-bg" style="top: 61%; left: 21%;"><img src="obrazky na stanku 2/smile_se_srdíčky-removebg-preview.png" alt="Smile se srdíčky"></div>
+    </div>
+    
+    <!-- Hlavní kontejner pro kvízovou stránku -->
+    <div class="page-container">
+      <!-- Nadpis dotazníku -->
+      <div class="quiz-title-container">
+        <h1 class="quiz-title">DOTAZNÍK</h1>
+      </div>
+      
+      <!-- Oddělený kvíz v samostatném kontejneru -->
+      <div class="quiz-outer-container">
+        <div class="quiz-container">
+          <form id="quiz-form">
+            <!-- Romantické otázky -->
+            <div class="category-title">
+              <h2>Romantické otázky</h2>
+            </div>
+
+            <div class="question" id="question1">
+              <h3>1. Kdy jsem tě poprvé políbil?</h3>
+              <div class="answer-input">
+                <input placeholder="Napiš svou odpověď..." class="input" name="q1" type="text">
+              </div>
+            </div>
+
+            <div class="question" id="question2">
+              <h3>2. Jaká vůně ti mě připomíná?</h3>
+              <div class="answer-input">
+                <input placeholder="Napiš svou odpověď..." class="input" name="q2" type="text">
+              </div>
+            </div>
+
+            <div class="question" id="question7">
+              <h3>3. Co je tvoje oblíbené místo, kam spolu chodíme?</h3>
+              <div class="answer-input">
+                <input placeholder="Napiš svou odpověď..." class="input" name="q7" type="text">
+              </div>
+            </div>
+
+            <div class="question" id="question14">
+              <h3>4. Co bych měl dělat častěji, aby ses cítila milovaná?</h3>
+              <div class="answer-input">
+                <input placeholder="Co ti nejvíc ukazuje moji lásku?" class="input" name="q14" type="text">
+              </div>
+            </div>
+
+            <div class="question" id="question15">
+              <h3>5. Jak bys popsala náš vztah jedním slovem?</h3>
+              <div class="answer-input">
+                <input placeholder="Jedno slovo, které vystihne náš vztah" class="input" name="q15" type="text">
+              </div>
+            </div>
+
+            <!-- Otázky o vztahu -->
+            <div class="category-title">
+              <h2>Otázky o vztahu</h2>
+            </div>
+
+            <div class="question" id="question3">
+              <h3>6. Co si myslíš že na tebě nejvíce miluju?</h3>
+              <div class="answer-input">
+                <input placeholder="Napiš svou odpověď..." class="input" name="q3" type="text">
+              </div>
+            </div>
+          
+            <div class="question" id="question4">
+              <h3>7. Kdy ses do mě zamilovala?</h3>
+              <div class="answer-input">
+                <input placeholder="Napiš svou odpověď..." class="input" name="q4" type="text">
+              </div>
+            </div>
+
+            <div class="question" id="question5">
+              <h3>8. Co si přeješ, abychom spolu zažili v budoucnu?</h3>
+              <div class="answer-input">
+                <input placeholder="Napiš svou odpověď..." class="input" name="q5" type="text">
+              </div>
+            </div>
+
+            <div class="question" id="question12">
+              <h3>9. Co tě na mně nejvíc překvapilo?</h3>
+              <div class="answer-input">
+                <input placeholder="Co tě nejvíc překvapilo?" class="input" name="q12" type="text">
+              </div>
+            </div>
+
+            <div class="question" id="question13">
+              <h3>10. Co tě na našem vztahu dělá šťastnou každý den?</h3>
+              <div class="answer-input">
+                <input placeholder="Co ti přináší radost?" class="input" name="q13" type="text">
+              </div>
+            </div>
+
+            <!-- Zábavné otázky -->
+            <div class="category-title">
+              <h2>Zábavné otázky</h2>
+            </div>
+
+            <div class="question" id="question6">
+              <h3>11. Kdo se víc mazlí?</h3>
+              <div class="answer-input">
+                <input placeholder="Kdo je větší mazlík?" class="input" name="q6" type="text">
+              </div>
+            </div>
+
+            <div class="question" id="question8">
+              <h3>12. Kdo má větší šanci se ztratit v IKEA?</h3>
+              <div class="answer-input">
+                <input placeholder="Kdo častěji bloudí?" class="input" name="q8" type="text">
+              </div>
+            </div>
+
+            <div class="question" id="question9">
+              <h3>13. Kdo víc ujídá z talíře toho druhého?</h3>
+              <div class="answer-input">
+                <input placeholder="Kdo je větší mlsoun?" class="input" name="q9" type="text">
+              </div>
+            </div>
+
+            <div class="question" id="question10">
+              <h3>14. Kdo má víc fotek toho druhého v mobilu?</h3>
+              <div class="answer-input">
+                <input placeholder="Kdo je větší fotograf?" class="input" name="q10" type="text">
+              </div>
+            </div>
+
+            <div class="question" id="question11">
+              <h3>15. Kdo dělá větší bordel, když vaří?</h3>
+              <div class="answer-input">
+                <input placeholder="Kdo je větší nepořádník v kuchyni?" class="input" name="q11" type="text">
+              </div>
+            </div>
+
+          <!-- Submit button container -->
+          <div class="submit-container" style="text-align: center; margin-top: 40px; margin-bottom: 30px;">
+            <button type="submit" id="submit-quiz" class="quiz-button">Pokračovat</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    </div>
+    
+    <script>
+      document.getElementById('quiz-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        window.location.href = 'stranka3.html';
+      });
+    </script>
+  </body>
+</html>

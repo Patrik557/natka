@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Tebe 💕</title>
+        <style>
+        :root {
+            --primary-color: #ff69b4;
+            --secondary-color: #e190f7;
+            --bg-color: #fff0f5;
+            --cell-size: 80px;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(135deg, #ec407a 0%, #880e4f 100%);
+            font-family: 'Segoe UI', sans-serif;
+            padding: 20px;
+        }
+
+        .title {
+            color: var(--primary-color);
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+
+        .penalty-counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            color: var(--primary-color);
+            font-size: 1.2em;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, var(--cell-size));
+            grid-template-rows: repeat(6, var(--cell-size));
+            gap: 8px;
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .cell {
+            width: var(--cell-size);
+            height: var(--cell-size);
+            background: linear-gradient(135deg, #ffd1e8, #ffe6f3);
+            border-radius: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            border: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .cell:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .cell.correct {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            animation: pulse 1s ease;
+        }
+
+        .cell.wrong {
+            background: #ffe6e6;
+            color: #ff4444;
+            animation: shake 0.5s ease;
+        }
+
+        .question-dialog {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            z-index: 1000;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .question-dialog.active {
+            display: block;
+            animation: popIn 0.3s ease;
+        }
+
+        .question-text {
+            color: var(--primary-color);
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            white-space: pre-line;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            font-size: 1em;
+            text-align: center;
+            outline: none;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes popIn {
+            from { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="mute-speaker">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white">
+                    <path d="M12 6L8 10H4V14H8L12 18V6Z" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M20 10L14 16" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M14 10L20 16" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+        </label>
+    </div>
+
+    <h1 class="title">Pro Tebe 💕</h1>
+    <div class="penalty-counter">Trestné body: <span id="penalty">0</span></div>
+    <div class="grid" id="grid"></div>
+    
+    <div class="overlay" id="overlay"></div>
+    <div class="question-dialog" id="questionDialog">
+        <div class="question-text" id="questionText"></div>
+        <input type="text" class="answer-input" id="answerInput" placeholder="Napiš svoji odpověď...">
+        <button class="submit-btn" id="submitButton">Odpovědět</button>
+    </div>
+
+    <script>
+        class Game {
+            constructor() {
+                this.grid = document.getElementById('grid');
+                this.overlay = document.getElementById('overlay');
+                this.dialog = document.getElementById('questionDialog');
+                this.questionText = document.getElementById('questionText');
+                this.answerInput = document.getElementById('answerInput');
+                this.submitButton = document.getElementById('submitButton');
+                this.penaltyDisplay = document.getElementById('penalty');
+                
+                this.penalties = 0;
+                this.currentPosition = 0;
+                
+                this.path = [
+                    {pos: [3,0], question: "Kdy máme výročí?", answer: "13.08.2024"},
+                    {pos: [3,1], question: "Kde jsme si dali první pusu?\n1) obchodák\n2) pod hvězdami\n3) na táboře", answer: "2"},
+                    {pos: [3,2], question: "Kdo koho miluje víc?\n1) Patrik\n2) Patrik", answer: "1|2"},
+                    {pos: [2,2], question: "Jaký by náš první velký výlet?\n1) Tatry\n2) Chorvatsko\n3) Brno", answer: "1"},
+                    {pos: [1,2], question: "Kde byl náš první sex?\n1) u mně doma\n2) v klubovně\n3) u tebe doma", answer: "3"},
+                    {pos: [0,2], question: "Jaký byl náš první výtvor?\n1) Plátno s našimi otisky rukou\n2) kreslení\n3) modelování", answer: "1"},
+                    {pos: [0,3], question: "Jaký byl můj první dárek pro tebe?\n1) korálky\n2) přívěšek\n3) plyšák", answer: "2"},
+                    {pos: [0,4], question: "Kde jsme se poprvé líbaly?\n1) ve staré klubovně\n2) v lese\n3) u mně doma", answer: "1"},
+                    {pos: [1,4], question: "Z Tater jsem ti něco schoval:\n1) tvoje kamínky\n2) činku\n3) boby", answer: "1"},
+                    {pos: [2,4], question: "Na co jsme byli poprvé v kině?\n1) Deadpool a Wolverine\n2) Já padouch 4\n3) Venom poslední tanec", answer: "2"},
+                    {pos: [3,4], question: "Jak moc máme úžasný vztah?\n1) nekonečno\n2) trochu\n3) asi hodně", answer: "1"},
+                    {pos: [3,5], question: "Kde se stal incident na židli?\n1) u tebe doma\n2) v klubovně\n3) u mně doma", answer: "3"}
+                ];
+                
+                this.createGrid();
+                this.setupEventListeners();
+            }
+
+            createGrid() {
+                for (let row = 0; row < 6; row++) {
+                    for (let col = 0; col < 6; col++) {
+                        const cell = document.createElement('button');
+                        cell.className = 'cell';
+                        cell.addEventListener('click', () => this.handleClick(row, col));
+                        this.grid.appendChild(cell);
+                    }
+                }
+            }
+
+            setupEventListeners() {
+                this.submitButton.addEventListener('click', () => {
+                    this.checkAnswer();
+                });
+
+                this.answerInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.checkAnswer();
+                    }
+                });
+
+                this.overlay.addEventListener('click', () => {
+                    this.hideDialog();
+                });
+            }
+
+            handleClick(row, col) {
+                const clickedCell = this.grid.children[row * 6 + col];
+                const currentPath = this.path[this.currentPosition];
+
+                if (currentPath.pos[0] === row && currentPath.pos[1] === col) {
+                    this.showQuestion(currentPath.question);
+                } else if (!clickedCell.classList.contains('wrong') && !clickedCell.classList.contains('correct')) {
+                    clickedCell.classList.add('wrong');
+                    clickedCell.textContent = '❌';
+                    this.penalties++;
+                    this.penaltyDisplay.textContent = this.penalties;
+                }
+            }
+
+            showQuestion(question) {
+                this.questionText.textContent = question;
+                this.answerInput.value = '';
+                this.overlay.classList.add('active');
+                this.dialog.classList.add('active');
+                this.answerInput.focus();
+            }
+
+            hideDialog() {
+                this.overlay.classList.remove('active');
+                this.dialog.classList.remove('active');
+            }
+
+            checkAnswer() {
+                const answer = this.answerInput.value;
+                const currentPath = this.path[this.currentPosition];
+                const clickedCell = this.grid.children[currentPath.pos[0] * 6 + currentPath.pos[1]];
+
+                if (currentPath.answer.includes('|') ? 
+                    currentPath.answer.split('|').includes(answer) : 
+                    answer === currentPath.answer) {
+                    clickedCell.classList.add('correct');
+                    clickedCell.innerHTML = '❤️';
+                    this.currentPosition++;
+                    this.hideDialog();
+
+                    if (this.currentPosition === this.path.length) {
+                        setTimeout(() => {
+                            alert('Gratuluju! Došla jsi do cíle! 🎉\nMáš ' + this.penalties + ' trestných bodů.\n💕');
+                            window.location.href = 'stranka8.html';
+                        }, 500);
+                    }
+                } else {
+                    alert('Špatná odpověď! Zkus to znovu.');
+                    this.answerInput.value = '';
+                    this.answerInput.focus();
+                }
+            }
+        }
+
+        window.addEventListener('load', () => {
+            new Game();
+        });
+    </script>
+</body>
+</html>
