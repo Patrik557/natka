@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>První stránka</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/loading.css">
+  <link rel="stylesheet" href="css/moving-button.css">
+    <style>
+      .memories-title {
+        text-align: center;
+        font-size: 2.5rem;
+        margin: 2rem 0;
+        padding: 1rem;
+        color: white;
+        position: relative;
+        font-weight: 600;
+        background: linear-gradient(
+          85deg,
+          #ffffff,
+          #f7f7f7,
+          #ffffff,
+          #f0f0f0,
+          #ffffff
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: pulse 2s ease-in-out infinite;
+        transform-origin: center;
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      .photo-grid {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        padding: 3rem;
+        flex-wrap: wrap;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      
+      .photo-item {
+        flex: 0 1 400px;
+        text-align: center;
+      }
+      
+      .photo-item img {
+        width: 100%;
+        height: 500px;
+        object-fit: cover;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      
+      .photo-item img:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+      }
+      
+      .photo-text {
+        margin-top: 1rem;
+        color: var(--muted);
+        font-size: 1.1rem;
+      }
+
+      @media (max-width: 768px) {
+        .photo-grid {
+          gap: 1.5rem;
+          padding: 1.5rem;
+        }
+        
+        .photo-item {
+          flex: 0 1 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loader-wrapper">
+      <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster">
+        <div class="wheel"></div>
+        <div class="hamster">
+          <div class="hamster__body">
+            <div class="hamster__head">
+              <div class="hamster__ear"></div>
+              <div class="hamster__eye"></div>
+              <div class="hamster__nose"></div>
+            </div>
+            <div class="hamster__limb hamster__limb--fr"></div>
+            <div class="hamster__limb hamster__limb--fl"></div>
+            <div class="hamster__limb hamster__limb--br"></div>
+            <div class="hamster__limb hamster__limb--bl"></div>
+            <div class="hamster__tail"></div>
+          </div>
+        </div>
+        <div class="spoke"></div>
+      </div>
+    </div>
+
+    <main>
+      <h1 class="memories-title">Vzpomínkový koutek</h1>
+      <div class="photo-grid">
+        <div class="photo-item">
+          <img src="obrazky na stranku 1/chorvatsko .jpg" alt="Chorvatsko">
+          <p class="photo-text">Naše vzpomínky z Chorvatska</p>
+        </div>
+        <div class="photo-item">
+          <img src="obrazky na stranku 1/diskoples.jpg" alt="Diskoples">
+          <p class="photo-text">Společný večer na diskoplese</p>
+        </div>
+        <div class="photo-item">
+          <img src="obrazky na stranku 1/skaut tabor .jpg" alt="Skautský tábor">
+          <p class="photo-text">Krásné chvíle ze skautského tábora</p>
+        </div>
+        <div class="photo-item">
+          <img src="obrazky na stranku 1/ivančena.jpg" alt="Ivančena">
+          <p class="photo-text">Společná cesta na Ivančenu</p>
+        </div>
+        <div class="photo-item">
+          <img src="obrazky na stranku 1/kukuč.jpg" alt="Kukuč">
+          <p class="photo-text">Tvůj roztomilý kukuč</p>
+        </div>
+        <div class="photo-item">
+          <img src="obrazky na stranku 1/pusinky.jpg" alt="Pusinky">
+          <p class="photo-text">Naše sladké pusinky</p>
+        </div>
+        <div class="photo-item">
+          <img src="obrazky na stranku 1/srnada s ručníkem .jpg" alt="Ručníková princezna">
+          <p class="photo-text">Moje ručníková princezna</p>
+        </div>
+        <div class="photo-item">
+          <img src="obrazky na stranku 1/výkendovka .jpg" alt="Víkendovka">
+          <p class="photo-text">Společná víkendovka plná zážitků</p>
+        </div>
+      </div>
+
+      <!-- Žertovné tlačítko uprostřed pod fotkami -->
+      <div class="moving-button-container">
+        <!-- From Uiverse.io by cssbuttons-io -->
+        <button class="moving-button">
+          <span class="text">Další stránka</span>
+        </button>
+      </div>
+    </main>
+
+    <script src="js/main.js" defer></script>
+    <script src="js/moving-button.js" defer></script>
+  </body>
+</html>
